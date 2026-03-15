@@ -3,7 +3,7 @@ import math
 
 st.set_page_config(page_title="Advanced Calculator", layout="centered")
 
-st.title("🧮 Advanced Calculator")
+st.title(" 🧮Mohan's Calculator")
 
 # Initialize session state
 if "expression" not in st.session_state:
@@ -49,9 +49,33 @@ def update_expression(value):
         if st.session_state.expression == "Error":
             st.session_state.expression = ""
         st.session_state.expression += value
+def calculate_from_keyboard():
+    try:
+        expr = st.session_state.expression
+        expr = expr.replace("×", "*").replace("÷", "/").replace("^", "**")
+        result = eval(expr)
+        st.session_state.expression = str(result)
+    except:
+        st.session_state.expression = "Error"
 
 # Display
-st.markdown(f"### {st.session_state.expression}")
+# Calculator display
+st.markdown("""
+<style>
+div[data-baseweb="input"] input {
+    font-size: 32px;
+    text-align: right;
+    font-weight: bold;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.text_input(
+    "",
+    key="expression",
+    placeholder="0",
+    on_change=calculate_from_keyboard
+)
 # Calculator buttons
 buttons = [
     ["(", ")", "%", "÷"],
@@ -103,6 +127,10 @@ c1.button(
     on_click=update_expression,
     args=("C",)
 )
-
-if c2.button("⌫", use_container_width=True):
-    update_expression("⌫")
+c2.button(
+    "⌫",
+    key="backspace",
+    use_container_width=True,
+    on_click=update_expression,
+    args=("⌫",)
+)
